@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "914758792436",
+    "project_id": "sharelocation-6ca8f",
+    "storage_bucket": "sharelocation-6ca8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914758792436:android:99e5e9ad27494c34afdaa1",
+        "android_client_info": {
+          "package_name": "com.mertkadir.sharelocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914758792436-hssiqjs5fbeap8n0527eu6cmag21slbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAycl5_KYZFpQ_T2vVVy4H5lsgh88ank-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914758792436-hssiqjs5fbeap8n0527eu6cmag21slbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
