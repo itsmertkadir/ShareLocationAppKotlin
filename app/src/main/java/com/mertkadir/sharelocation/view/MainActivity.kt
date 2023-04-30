@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity() {
                             val locationName = document.get("locationName") as String
                             //val userEmail = document.get("userEmail") as String
                             val selectedLatLng = document.get("locationLatLng")
-                            val post = Post(comment,locationName, selectedLatLng as LatLng)
+                            val post = Post(comment,locationName, selectedLatLng.let {
+                                it.toString()
+                            })
                             postArrayList.add(post)
                         }
 

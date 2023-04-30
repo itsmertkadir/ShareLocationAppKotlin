@@ -34,6 +34,7 @@ import com.google.firebase.ktx.Firebase
 import com.mertkadir.sharelocation.R
 import com.mertkadir.sharelocation.databinding.ActivityFeedBinding
 import com.mertkadir.sharelocation.model.Post
+import org.json.JSONObject
 import java.security.Permission
 import java.util.prefs.Preferences
 
@@ -99,9 +100,18 @@ class FeedActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
             placeFromMain?.let {
 
 
-                val secLatLng = LatLng(it.selectedLatLng.latitude, it.selectedLatLng.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(secLatLng,15f))
+                val jsonString = it.selectedLatLng
+                val jsonObject = JSONObject(jsonString)
 
+                val lat = jsonObject.getDouble("latitude")
+                val lng = jsonObject.getDouble("longitude")
+
+                val secLatLng = LatLng(lat,lng)
+
+
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(secLatLng,15f))
+                mMap.addMarker(MarkerOptions().position(secLatLng).title(it.locationName))
                 binding.commentText.setText(it.comment)
                 binding.locationNameText.setText(it.locationName)
             }
