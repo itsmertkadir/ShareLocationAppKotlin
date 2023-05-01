@@ -2,10 +2,20 @@ package com.mertkadir.sharelocation.model
 
 
 
-import com.google.type.LatLng
-import java.io.Serializable
+import android.os.Parcelable
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
+import kotlinx.parcelize.Parcelize
 
-data class Post(
-    val comment:String, val locationName: String, val selectedLatLng: String
-) : Serializable {
-}
+annotation class Parcelize
+
+@Parcelize
+ data class Post(
+    var comment:String,
+    var locationName: String,
+    var date :Timestamp,
+    var latLang: LatLng
+    ) : Parcelable
+
+
+

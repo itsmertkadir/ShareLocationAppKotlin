@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PackageManagerCompat
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mertkadir.sharelocation.R
 import com.mertkadir.sharelocation.databinding.ActivityFeedBinding
+import com.mertkadir.sharelocation.model.Parcelize
 import com.mertkadir.sharelocation.model.Post
 import org.json.JSONObject
 import java.security.Permission
@@ -82,6 +85,7 @@ class FeedActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
     }
 
 
+
     override fun onMapReady(googleMap: GoogleMap) {
         if (googleMap != null){
             mMap = googleMap
@@ -95,11 +99,19 @@ class FeedActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
             binding.button2.visibility = View.GONE
             mMap.clear()
 
-            placeFromMain = intent.getSerializableExtra("locationLatLng") as? Post
+            placeFromMain = intent.getParcelableExtra("locationLatLng", Post::class.java)
 
             placeFromMain?.let {
 
+                val secLatLng = it.latLang
+                binding.locationNameText.setText(it.locationName)
+                binding.commentText.setText(it.comment)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(secLatLng,15f))
+                mMap.addMarker(MarkerOptions().position(secLatLng).title(it.locationName))
+                binding.commentText.setText(it.comment)
+                binding.locationNameText.setText(it.locationName)
 
+                /*
                 val jsonString = it.selectedLatLng
                 val jsonObject = JSONObject(jsonString)
 
@@ -114,6 +126,9 @@ class FeedActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
                 mMap.addMarker(MarkerOptions().position(secLatLng).title(it.locationName))
                 binding.commentText.setText(it.comment)
                 binding.locationNameText.setText(it.locationName)
+
+                 */
+
             }
 
         }else{
@@ -202,23 +217,26 @@ class FeedActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
 
     fun shareBTN(view : View){
 
+      val commentText = binding.commentText.text
+        val locationName = binding.locationNameText.text
+        val locationLatLng = selectLatLng
 
+        if (commentText.equals("") || locationName.equals("") || locationLatLng.latitude.equals(0.0) || locationLatLng.longitude.equals(0.0)) {
+            Toast.makeText(this, "Enter Name Comment and select Location", Toast.LENGTH_SHORT).show()
+        }else {
+            val post = Post(binding.commentText.text.toString(),binding.locationNameText.text.toString(),Timestamp.now(), selectLatLng)
 
-        val postMap = hashMapOf<String, Any>()
-        postMap.put("locationName",binding.locationNameText.text.toString())
-        postMap.put("locationLatLng",selectLatLng)
-        postMap.put("comment",binding.commentText.text.toString())
-        //postMap.put("userEmail",auth.currentUser!!.email!!)
-        postMap.put("date",Timestamp.now())
+            firestore.collection("Posts").add(post).addOnSuccessListener {
 
+                finish()
 
-        firestore.collection("Posts").add(postMap).addOnSuccessListener {
+            }.addOnFailureListener {
+                Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
 
-            finish()
-
-        }.addOnFailureListener {
-            Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
         }
+
+
 
 
     }

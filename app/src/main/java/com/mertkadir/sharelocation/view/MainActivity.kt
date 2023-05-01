@@ -6,13 +6,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.type.LatLng
+
 import com.mertkadir.sharelocation.adapter.RecyclerAdapter
 import com.mertkadir.sharelocation.databinding.ActivityMainBinding
 import com.mertkadir.sharelocation.model.Post
@@ -55,23 +57,40 @@ class MainActivity : AppCompatActivity() {
             }else{
 
                 if (value != null) {
-                    if (!value.isEmpty){
+                    if (!value.documents.isNullOrEmpty()){
 
+                        println(value.size())
 
                         val documents = value.documents
 
                         postArrayList.clear()
 
+
+                        for (document in documents) {
+
+                            val post = Post(
+                                document.get("comment") as String,
+                                document.get("locationName") as String,
+                                document.get("date") as Timestamp,
+                                LatLng((document.get("latLang") as HashMap<String,Double>)["latitude"]!!, (document.get("latLang") as HashMap<String,Double>)["longitude"]!!)
+                            )
+                            postArrayList.add(post)
+
+
+                        }
+
+/*
                         for (document in documents) {
                             val comment = document.get("comment") as String
                             val locationName = document.get("locationName") as String
                             //val userEmail = document.get("userEmail") as String
                             val selectedLatLng = document.get("locationLatLng")
-                            val post = Post(comment,locationName, selectedLatLng.let {
-                                it.toString()
-                            })
+                            val post = Post(comment,locationName, selectedLatLng)
                             postArrayList.add(post)
-                        }
+                            }
+
+ */
+
 
                         recyclerAdapter.notifyDataSetChanged()
 
